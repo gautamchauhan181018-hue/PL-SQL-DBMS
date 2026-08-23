@@ -1,54 +1,51 @@
-/* 8) Write a PL/SQL block which displays the gross 
-salary of employees as per user input EID. (Consider 
-an EMP table with EID, EName, Deptno, Deptname 
-Gender, Age, BasicSal) with appropriate data types.) 
-Gross_Salary: BASICSAL + (DA + HRA + Medical) – 
-PF.*/
+-- 8) Write a PL/SQL block which displays the gross 
+-- salary of employees as per user input EID. (Consider 
+-- an EMP table with EID, EName, Deptno, Deptname 
+-- Gender, Age, BasicSal) with appropriate data types.) 
+-- Gross_Salary: BASICSAL + (DA + HRA + Medical) – 
+-- PF. 
+-- Rules: HRA = 15% of basic, DA = 50% of basic, 
+--  Medical = Rs. 500, PF = 10% of basic. 
+
+
 
 CREATE TABLE EMP(
-
-    EID NUMBER PRIMARY KEY,
-    ENAME VARCHAR2(15),
-    DEPTNO NUMBER,
-    DEPTNAME VARCHAR2(15),
-    GENDER VARCHAR2(2),
-    AGE NUMBER,
-    BASICSAL NUMBER
-);
-
-INSERT INTO EMP
-VALUES(101,'BABULOHAR',2,'FOCA',21,NULL);
+  EID NUMBER PRIMARY KEY,
+  ENAME VARCHAR2(15),
+  DEPTNO NUMBER,
+  DEPTNAME VARCHAR2(15),
+  GENDER VARCHAR2(2),
+  AGE NUMBER,
+  BASICSAL NUMBER(15)
+ );
 
 
 SET SERVEROUTPUT ON;
 
-DECLARE 
+ DECLARE 
 
-V_EID EMP.EID%TYPE := &USER_EID;
-V_ENAMNE EMP.ENAME%TYPE;
-V_BASICSAL EMP.BASICSAL%TYPE;
-V_GROSS_SAL NUMBER(10,2);
+ V_EID EMP.EID%TYPE := &USER_EID;
+ V_ENAME EMP.ENAME%TYPE;
+ V_BASICSAL EMP.BASICSAL%TYPE;
+ V_GROSS_SALARY NUMBER;
+ DA NUMBER;
+ HRA NUMBER;
+ MEDICAL NUMBER;
+ PF NUMBER;
 
-V_DA NUMBER (10,2);
-V_HRA NUMBER(10,2);
-V_MEDICAL NUMBER(10,2) := 2000.00;
-V_PF NUMBER(10,2);
+ BEGIN 
 
-BEGIN 
+  
+   SELECT BASICSAL,ENAME INTO V_BASICSAL,V_ENAME FROM EMP WHERE EID = V_EID;
+  
+  DA := V_BASICSAL * 50/100;
+  HRA := V_BASICSAL * 15/100;
+  MEDICAL := 500;
+  PF := V_BASICSAL * 10/100;
 
-SELECT ENAME,BASICSAL INTO V_ENAME ,V_BASICSAL FROM EMP WHERE EID = V_EID;
+  V_GROSS_SALARY := V_BASICSAL + (DA + HRA + MEDICAL) - PF;
 
-V_DA := V_BASICSAL * 0.40;
-V_HRA := V_BASICSAL * 0.15;
-V_PF := V_BASICSAL * 0.12;
+  DBMS_OUTPUT.PUT_LINE('GROSS SALARY OF  ' || V_ENAME || ' IS ' || V_GROSS_SALARY);
 
-V_GROSS_SAL := V_BASICSAL + (V_DA + V_HRA + V_MEDICAL)- V_PF;
-
-DBMS_OUTPUT.PUT_LINE('EMPLOYEE ID: ' || V_EID);
-DBMS_OUTPUT.PUT_LINE('EMPLOYEE NAME: ' || V_ENAME);
-DBMS_OUTPUT.PUT_LINE('BASIC SALARY: ' || TO_CHAR(V_BASICSAL,'$999,999.00'));
-DBMS_OUTPUT.PUT_LINE('GROSS SALARY: ' || TO_CHAR(V_GROSS_SAL, '$999,999.00'));
-
-END;
-/
-
+  END;
+  /
